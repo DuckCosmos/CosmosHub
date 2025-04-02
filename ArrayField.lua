@@ -1117,7 +1117,6 @@ function OpenSideBar()
 end
 local function Minimise()
 Debounce = true
-l
 TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 150, 0, 40), BackgroundTransparency = 1}):Play()
 TweenService:Create(Main.Topbar, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
 TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
