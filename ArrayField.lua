@@ -14,7 +14,7 @@ Arrays  | Designing + Programming + New Features
 
 local Release = "Release 2A"
 local NotificationDuration = 6.5
-local ArrayFieldFolder = "ArrayField"
+local ArrayFieldFolder = "CosmoFolder"
 local ConfigurationFolder = ArrayFieldFolder.."/Configurations"
 local ConfigurationExtension = ".rfld"
 local ArrayFieldQuality = {}
@@ -340,7 +340,7 @@ local function LoadConfiguration(Configuration)
 				end    
 			end)
 		else
-			ArrayFieldLibrary:Notify({Title = "Flag Error", Content = "ArrayField was unable to find '"..FlagName.. "'' in the current script"})
+			ArrayFieldLibrary:Notify({Title = "Flag Error", Content = "Cosmos was unable to find '"..FlagName.. "'' in the current script"})
 		end
 	end
 end
@@ -708,7 +708,7 @@ function ArrayFieldLibrary:Notify(NotificationSettings)
 				NewAction.MouseButton1Click:Connect(function()
 					local Success, Response = pcall(Action.Callback)
 					if not Success then
-						print("ArrayField | Action: "..Action.Name.." Callback Error " ..tostring(Response))
+						print("CosmosHub | Action: "..Action.Name.." Callback Error " ..tostring(Response))
 					end
 					ActionCompleted = true
 				end)
@@ -757,7 +757,7 @@ function ArrayFieldLibrary:Notify(NotificationSettings)
 			end
 		end
 
-		if ArrayField.Name == "ArrayField" then
+		if ArrayField.Name == "Cosmos" then
 			neon:BindFrame(Notification.BlurModule, {
 				Transparency = 0.98;
 				BrickColor = BrickColor.new("Institutional white");
@@ -1159,10 +1159,10 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 	LoadingFrame.Subtitle.TextTransparency = 1
 	Main.Shadow.Image.ImageTransparency = 1
 	LoadingFrame.Version.TextTransparency = 1
-	LoadingFrame.Title.Text = Settings.LoadingTitle or "Arrayfield Interface Suite"
-	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "by Sirius | Meta"
-	if Settings.LoadingTitle ~= "Arrayfield Interface Suite" then
-		LoadingFrame.Version.Text = "Arrayfield UI"
+	LoadingFrame.Title.Text = Settings.LoadingTitle or "Cosmo Interface Suite"
+	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "by DuckCosmos | Meta"
+	if Settings.LoadingTitle ~= "Cosmo Interface Suite" then
+		LoadingFrame.Version.Text = "Cosmos UI"
 	end
 	Topbar.Visible = false
 	Elements.Visible = false
@@ -1226,7 +1226,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 			end
 
 			if Settings.Discord.RememberJoins then -- We do logic this way so if the developer changes this setting, the user still won't be prompted, only new users
-				writefile(ArrayFieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"ArrayField RememberJoins is true for this invite, this invite will not ask you to join again")
+				writefile(ArrayFieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Cosmo RememberJoins is true for this invite, this invite will not ask you to join again")
 			end
 		else
 
@@ -1250,7 +1250,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 					Settings.KeySettings.Key[i] = string.gsub(Settings.KeySettings.Key[i], " ", "")
 				end)
 				if not Success then
-					print("ArrayField | "..Key.." Error " ..tostring(Response))
+					print("Cosmo | "..Key.." Error " ..tostring(Response))
 				end
 			end
 		end
@@ -1681,7 +1681,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Button.ElementIndicator, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
 					TweenService:Create(Button.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Button.Title.Text = "Callback Error"
-					print("ArrayField | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
+					print("Cosmo | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Button.Title.Text = ButtonSettings.Name
 					TweenService:Create(Button, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2004,7 +2004,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Input, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Input.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Input.Title.Text = "Callback Error"
-					print("ArrayField | "..InputSettings.Name.." Callback Error " ..tostring(Response))
+					print("Cosmo | "..InputSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Input.Title.Text = InputSettings.Name
 					TweenService:Create(Input, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2276,7 +2276,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 					end)
 					if not Success then
 						Error('Callback Error')
-						print("ArrayField | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
+						print("Cosmo | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
 					end
 
 					OptionInTable.Selected = true
@@ -2349,7 +2349,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 						TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 						TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 						Dropdown.Title.Text = "Callback Error"
-						print("ArrayField | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
+						print("Cosmo | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
 						wait(0.5)
 						Dropdown.Title.Text = DropdownSettings.Name
 						TweenService:Create(Dropdown, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2528,7 +2528,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 							TweenService:Create(Keybind, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 							TweenService:Create(Keybind.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 							Keybind.Title.Text = "Callback Error"
-							print("ArrayField | "..KeybindSettings.Name.." Callback Error " ..tostring(Response))
+							print("Cosmo | "..KeybindSettings.Name.." Callback Error " ..tostring(Response))
 							wait(0.5)
 							Keybind.Title.Text = KeybindSettings.Name
 							TweenService:Create(Keybind, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2683,7 +2683,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Toggle.Title.Text = "Callback Error"
-					print("ArrayField | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+					print("Cosmo | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Toggle.Title.Text = ToggleSettings.Name
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -2729,7 +2729,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Toggle.Title.Text = "Callback Error"
-					print("ArrayField | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+					print("Cosmo | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Toggle.Title.Text = ToggleSettings.Name
 					TweenService:Create(Toggle, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -3150,7 +3150,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 						TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 						TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 						Slider.Title.Text = "Callback Error"
-						print("ArrayField | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
+						print("Cosmo | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
 						wait(0.5)
 						Slider.Title.Text = SliderSettings.Name
 						TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -3187,7 +3187,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 					TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
 					TweenService:Create(Slider.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
 					Slider.Title.Text = "Callback Error"
-					print("ArrayField | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
+					print("Cosmo | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
 					wait(0.5)
 					Slider.Title.Text = SliderSettings.Name
 					TweenService:Create(Slider, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {BackgroundColor3 = SelectedTheme.ElementBackground}):Play()
@@ -3266,74 +3266,65 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 	wait(0.1)
 	TweenService:Create(Topbar.Hide, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.8}):Play()
 	wait(0.3)
-	function Window:Prompt(PromptSettings)
-		local PromptUI = Prompt.Prompt
-		Prompt.Visible = true
-		Prompt.BackgroundTransparency = 1
-		PromptUI.BackgroundTransparency = 1
-		PromptUI.UIStroke.Transparency = 1
-		PromptUI.Content.TextTransparency = 1
-		PromptUI.Title.TextTransparency = 1
-		PromptUI.Sub.TextTransparency = 1
-		PromptUI.Size = UDim2.new(0,340,0,140)
-		PromptUI.Buttons.Template.Visible = false
-		PromptUI.Buttons.Template.TextLabel.TextTransparency = 1
-		PromptUI.Buttons.Template.UIStroke.Transparency = 1
-		--PromptUI.Buttons.Middle.Visible = false
-		--PromptUI.Buttons.Middle.TextLabel.TextTransparency = 1
-		--PromptUI.Buttons.Middle.UIStroke.Transparency = 1
+	function Window:Prompt(PromptSettings) local PromptUI = Prompt.Prompt Prompt.Visible = true Prompt.BackgroundTransparency = 1 PromptUI.BackgroundTransparency = 1 PromptUI.UIStroke.Transparency = 1 PromptUI.Content.TextTransparency = 1 PromptUI.Title.TextTransparency = 1 PromptUI.Sub.TextTransparency = 1 PromptUI.Size = UDim2.new(0, 340, 0, 140) PromptUI.Buttons.Template.Visible = false PromptUI.Buttons.Template.TextLabel.TextTransparency = 1 PromptUI.Buttons.Template.UIStroke.Transparency = 1
 
-		PromptUI.Content.Text = PromptSettings.Content
-		PromptUI.Sub.Text = PromptSettings.SubTitle or ''
-		PromptUI.Title.Text = PromptSettings.Title or ''
+PromptUI.Content.Text = PromptSettings.Content
+PromptUI.Sub.Text = PromptSettings.SubTitle or ''
+PromptUI.Title.Text = PromptSettings.Title or ''
 
-		if PromptSettings.Actions then
-			for name,info in pairs(PromptSettings.Actions) do
-				print(info)
-				local Button = PromptUI.Buttons.Template:Clone()
-				Button.TextLabel.Text = info.Name
-				Button.Interact.MouseButton1Up:Connect(function()
-					if not clicked then
-						local Success, Response = pcall(info.Callback)
-						clicked = true
-						if not Success then
-							ClosePrompt()
-							print("ArrayField | "..info.Name.." Callback Error " ..tostring(Response))
-						else
-							ClosePrompt()
-						end
-					end
-				end)
-				Button.Name = name
-				Button.Parent = PromptUI.Buttons -- saving memory
-				Button.Size = UDim2.fromOffset(Button.TextLabel.TextBounds.X + 24, 30)
-			end
-		end
+local GridLayout = Instance.new("UIGridLayout", PromptUI.Buttons)
+GridLayout.FillDirection = Enum.FillDirection.Horizontal
+GridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+GridLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+GridLayout.CellPadding = UDim2.new(0, 10, 0, 0)
+GridLayout.CellSize = UDim2.new(0, 120, 0, 30)
 
-		TweenService:Create(Prompt, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = .5}):Play()
-		wait(.2)
-		TweenService:Create(PromptUI, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {BackgroundTransparency = 0,Size = UDim2.new(0,350,0,150)}):Play()
-		wait(0.2)
-		TweenService:Create(PromptUI.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
-		TweenService:Create(PromptUI.Title, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-		TweenService:Create(PromptUI.Content, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-		TweenService:Create(PromptUI.Sub, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-		wait(1)
-		if PromptSettings.Actions then
-			for _,button in pairs(PromptUI.Buttons:GetChildren()) do
-				if button.Name ~= 'Template' and button.Name ~= 'Middle' and button:IsA('Frame') then
-					button.Visible = true
-					TweenService:Create(button.UIStroke,TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
-					TweenService:Create(button.TextLabel,TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-					wait(.8)
-				end
-			end
-		else
-			--TweenService:Create(PromptUI.Buttons.Middle.UIStroke,TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
-			--TweenService:Create(PromptUI.Buttons.Middle.TextLabel,TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-		end
-	end
-	return Window
+if PromptSettings.Actions then
+    for name, info in pairs(PromptSettings.Actions) do
+        local Button = PromptUI.Buttons.Template:Clone()
+        Button.TextLabel.Text = info.Name
+        Button.Interact.MouseButton1Up:Connect(function()
+            if not clicked then
+                local Success, Response = pcall(info.Callback)
+                clicked = true
+                if not Success then
+                    ClosePrompt()
+                    print("Cosmo | " .. info.Name .. " Callback Error " .. tostring(Response))
+                else
+                    ClosePrompt()
+                end
+            end
+        end)
+        Button.Name = name
+        Button.Parent = PromptUI.Buttons
+        Button.Size = UDim2.fromOffset(Button.TextLabel.TextBounds.X + 24, 30)
+        Button.Visible = true
+    end
+end
+
+TweenService:Create(Prompt, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = .5}):Play()
+wait(.2)
+TweenService:Create(PromptUI, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {BackgroundTransparency = 0, Size = UDim2.new(0, 350, 0, 150)}):Play()
+wait(0.2)
+TweenService:Create(PromptUI.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+TweenService:Create(PromptUI.Title, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+TweenService:Create(PromptUI.Content, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+TweenService:Create(PromptUI.Sub, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+wait(1)
+
+if PromptSettings.Actions then
+    for _, button in pairs(PromptUI.Buttons:GetChildren()) do
+        if button.Name ~= 'Template' and button:IsA('Frame') then
+            button.Visible = true
+            TweenService:Create(button.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
+            TweenService:Create(button.TextLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+            wait(.8)
+        end
+    end
+end
+
+return Window
+
 end
 
 
