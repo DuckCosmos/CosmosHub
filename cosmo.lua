@@ -690,6 +690,7 @@ end
 
 local Main = CosmosH.Main
 local MPrompt = CosmosH:FindFirstChild('Prompt')
+local Prompt = Main.Prompt
 local Topbar = Main.Topbar
 local Elements = Main.Elements
 local LoadingFrame = Main.LoadingFrame
@@ -697,7 +698,7 @@ local TabList = Main.TabList
 local dragBar = CosmosH:FindFirstChild('Drag')
 local dragInteract = dragBar and dragBar.Interact or nil
 local dragBarCosmetic = dragBar and dragBar.Drag or nil
-
+MPrompt.Title.Text = "Show CosmosHub"
 local dragOffset = 255
 local dragOffsetMobile = 150
 
@@ -1106,6 +1107,28 @@ local function openSearch()
 	TweenService:Create(Main.Search, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Size = UDim2.new(1, -35, 0, 35)}):Play()
 end
 
+function ClosePrompt()
+	local PromptUI = Prompt.Prompt
+	clicked = false
+	TweenService:Create(Prompt, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = 1}):Play()
+	TweenService:Create(PromptUI, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {BackgroundTransparency = 1,Size = UDim2.new(0,340,0,140)}):Play()
+	TweenService:Create(PromptUI.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+	TweenService:Create(PromptUI.Title, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+	TweenService:Create(PromptUI.Content, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+	TweenService:Create(PromptUI.Sub, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+	for _,button in pairs(PromptUI.Buttons:GetChildren()) do
+		if button.Name ~= 'Template' and button:IsA("Frame") then
+			TweenService:Create(button.UIStroke,TweenInfo.new(0.2, Enum.EasingStyle.Quint), {Transparency = 1}):Play()
+			TweenService:Create(button.TextLabel,TweenInfo.new(0.2, Enum.EasingStyle.Quint), {TextTransparency = 1}):Play()
+			delay(.2,function()
+				button:Destroy()
+			end)
+		end
+	end
+	wait(.5)
+	Prompt.Visible = false
+end
+
 local function closeSearch()
 	searchOpen = false
 
@@ -1437,6 +1460,78 @@ local function Minimise()
 	Debounce = false
 end
 
+function Window:Prompt(PromptSettings)
+local PromptUI = Prompt.Prompt
+Prompt.Visible = true
+Prompt.BackgroundTransparency = 1
+PromptUI.BackgroundTransparency = 1
+PromptUI.UIStroke.Transparency = 1
+PromptUI.Content.TextTransparency = 1
+PromptUI.Title.TextTransparency = 1
+PromptUI.Sub.TextTransparency = 1
+PromptUI.Size = UDim2.new(0,340,0,140)
+PromptUI.Buttons.Template.Visible = false
+PromptUI.Buttons.Template.TextLabel.TextTransparency = 1
+PromptUI.Buttons.Template.UIStroke.Transparency = 1
+--PromptUI.Buttons.Middle.Visible = false
+--PromptUI.Buttons.Middle.TextLabel.TextTransparency = 1
+--PromptUI.Buttons.Middle.UIStroke.Transparency = 1
+
+PromptUI.Content.Text = PromptSettings.Content
+PromptUI.Sub.Text = PromptSettings.SubTitle or ''
+PromptUI.Title.Text = PromptSettings.Title or ''
+
+if PromptSettings.Actions then    
+	for name,info in pairs(PromptSettings.Actions) do    
+		print(info)    
+		local Button = PromptUI.Buttons.Template:Clone()    
+		Button.TextLabel.Text = info.Name    
+		Button.Interact.MouseButton1Up:Connect(function()    
+			if not clicked then    
+				local Success, Response = pcall(info.Callback)    
+				clicked = true    
+				if not Success then    
+					ClosePrompt()    
+					print("Cosmo | "..info.Name.." Callback Error " ..tostring(Response))    
+				else    
+					ClosePrompt()    
+				end    
+			end    
+		end)    
+		Button.Name = name    
+		Button.Parent = PromptUI.Buttons -- saving memory    
+		Button.Size = UDim2.fromOffset(Button.TextLabel.TextBounds.X + 24, 30)    
+	end    
+end    
+
+TweenService:Create(Prompt, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = .5}):Play()    
+wait(.2)    
+TweenService:Create(PromptUI, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {BackgroundTransparency = 0,Size = UDim2.new(0,350,0,150)}):Play()    
+wait(0.2)    
+TweenService:Create(PromptUI.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Transparency = 0}):Play()    
+TweenService:Create(PromptUI.Title, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()    
+TweenService:Create(PromptUI.Content, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()    
+TweenService:Create(PromptUI.Sub, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()    
+wait(1)    
+if PromptSettings.Actions then    
+	for _,button in pairs(PromptUI.Buttons:GetChildren()) do    
+		if button.Name ~= 'Template' and button.Name ~= 'Middle' and button:IsA('Frame') then    
+			button.Visible = true    
+			TweenService:Create(button.UIStroke,TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()    
+			TweenService:Create(button.TextLabel,TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()    
+			wait(.8)    
+		end    
+	end    
+else    
+	--TweenService:Create(PromptUI.Buttons.Middle.UIStroke,TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()    
+	--TweenService:Create(PromptUI.Buttons.Middle.TextLabel,TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()    
+end
+
+end
+return Window
+
+end
+
 local function updateSettings()
 	local encoded
 	local success, err = pcall(function()
@@ -1566,6 +1661,25 @@ function CosmosLibrary:CreateWindow(Settings)
 	if Settings.LoadingTitle ~= "Cosmo Interface Suite" then
 		LoadingFrame.Version.Text = "Cosmos UI"
 	end
+	
+				if Settings.KeySettings.Actions then
+				for _,ActionInfo in ipairs(Settings.KeySettings.Actions) do
+					local Action = KeyMain.Actions.Template:Clone()
+					Action.Text = ActionInfo.Text
+					Action.MouseButton1Down:Connect(ActionInfo.OnPress)
+					Action.MouseEnter:Connect(function()
+						TweenService:Create(Action,TweenInfo.new(.25,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{TextColor3 = Color3.fromRGB(185, 185, 185)}):Play()
+					end)
+					Action.MouseLeave:Connect(function()
+						TweenService:Create(Action,TweenInfo.new(.25,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{TextColor3 = Color3.fromRGB(105, 105, 105)}):Play()
+					end)
+					Action.Parent = KeyMain.Actions
+					delay(.2,function()
+						Action.Visible = true
+						TweenService:Create(Action, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
+					end)
+				end
+			end
 
 	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
 		Topbar.Icon.Visible = true
