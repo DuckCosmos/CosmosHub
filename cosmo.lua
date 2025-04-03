@@ -690,7 +690,6 @@ end
 
 local Main = CosmosH.Main
 local MPrompt = CosmosH:FindFirstChild('Prompt')
-local Prompt = Main.Prompt
 local Topbar = Main.Topbar
 local Elements = Main.Elements
 local LoadingFrame = Main.LoadingFrame
