@@ -3278,69 +3278,88 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 	TweenService:Create(Topbar.Hide, TweenInfo.new(0.7, Enum.EasingStyle.Quint), {ImageTransparency = 0.8}):Play()
 	wait(0.3)
 
-function Window:Prompt(PromptSettings) local PromptUI = Prompt.Prompt Prompt.Visible = true Prompt.BackgroundTransparency = 1 PromptUI.BackgroundTransparency = 1 PromptUI.UIStroke.Transparency = 1 PromptUI.Content.TextTransparency = 1 PromptUI.Title.TextTransparency = 1 PromptUI.Sub.TextTransparency = 1 PromptUI.Size = UDim2.new(0,340,0,140) PromptUI.Buttons.Template.Visible = false PromptUI.Buttons.Template.TextLabel.TextTransparency = 1 PromptUI.Buttons.Template.UIStroke.Transparency = 1
+function Window:Prompt(PromptSettings) if not Prompt or not Prompt.Prompt then return end local PromptUI = Prompt.Prompt
 
-PromptUI.Content.Text = PromptSettings.Content
-PromptUI.Sub.Text = PromptSettings.SubTitle or ''
-PromptUI.Title.Text = PromptSettings.Title or ''
+Prompt.Visible = true
+Prompt.BackgroundTransparency = 1
+PromptUI.BackgroundTransparency = 1
+if PromptUI.UIStroke then PromptUI.UIStroke.Transparency = 1 end
+if PromptUI.Content then PromptUI.Content.TextTransparency = 1 end
+if PromptUI.Title then PromptUI.Title.TextTransparency = 1 end
+if PromptUI.Sub then PromptUI.Sub.TextTransparency = 1 end
 
-if PromptSettings.Actions then
-local totalWidth = 0
-local buttons = {}
-
-for name, info in pairs(PromptSettings.Actions) do  
-    local Button = PromptUI.Buttons.Template:Clone()  
-    Button.TextLabel.Text = info.Name  
-    Button.Interact.MouseButton1Up:Connect(function()  
-        if not clicked then  
-            local Success, Response = pcall(info.Callback)  
-            clicked = true  
-            if not Success then  
-                ClosePrompt()  
-                print("Cosmo | "..info.Name.." Callback Error " .. tostring(Response))  
-            else  
-                ClosePrompt()  
-            end  
-        end  
-    end)  
-    Button.Name = name  
-    Button.Parent = PromptUI.Buttons  
-    Button.Size = UDim2.fromOffset(Button.TextLabel.TextBounds.X + 24, 30)  
-    totalWidth = totalWidth + Button.Size.X.Offset + 10  
-    table.insert(buttons, Button)  
-end  
-
-local startX = (PromptUI.Buttons.AbsoluteSize.X - totalWidth) / 2  
-local currentX = startX  
-
-for _, Button in ipairs(buttons) do  
-    Button.Position = UDim2.new(0, currentX, 0.5, -15)  
-    currentX = currentX + Button.Size.X.Offset + 10  
+PromptUI.Size = UDim2.new(0, 340, 0, 140)
+if PromptUI.Buttons and PromptUI.Buttons.Template then
+    PromptUI.Buttons.Template.Visible = false
+    if PromptUI.Buttons.Template.TextLabel then PromptUI.Buttons.Template.TextLabel.TextTransparency = 1 end
+    if PromptUI.Buttons.Template.UIStroke then PromptUI.Buttons.Template.UIStroke.Transparency = 1 end
 end
 
+if PromptUI.Content then PromptUI.Content.Text = PromptSettings.Content or "" end
+if PromptUI.Sub then PromptUI.Sub.Text = PromptSettings.SubTitle or "" end
+if PromptUI.Title then PromptUI.Title.Text = PromptSettings.Title or "" end
+
+if PromptSettings.Actions and PromptUI.Buttons then
+    local totalWidth = 0
+    local buttons = {}
+    
+    for name, info in pairs(PromptSettings.Actions) do  
+        if PromptUI.Buttons.Template then
+            local Button = PromptUI.Buttons.Template:Clone()
+            if Button.TextLabel then Button.TextLabel.Text = info.Name end
+            
+            Button.Interact.MouseButton1Up:Connect(function()  
+                local Success, Response = pcall(info.Callback)  
+                if not Success then  
+                    print("Cosmo | "..info.Name.." Callback Error " .. tostring(Response))  
+                end  
+            end)  
+            
+            Button.Name = name  
+            Button.Parent = PromptUI.Buttons  
+            Button.Size = UDim2.fromOffset(Button.TextLabel and Button.TextLabel.TextBounds.X + 24 or 100, 30)  
+            totalWidth = totalWidth + Button.Size.X.Offset + 10  
+            table.insert(buttons, Button)  
+        end
+    end  
+    
+    task.wait()
+    
+    local containerWidth = PromptUI.Buttons.AbsoluteSize.X > 0 and PromptUI.Buttons.AbsoluteSize.X or 340
+    local startX = (containerWidth - totalWidth) / 2  
+    local currentX = startX  
+    
+    for _, Button in ipairs(buttons) do  
+        Button.Position = UDim2.new(0, currentX, 0.5, -15)  
+        currentX = currentX + Button.Size.X.Offset + 10  
+    end
 end
 
 TweenService:Create(Prompt, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {BackgroundTransparency = .5}):Play()
-wait(.2)
-TweenService:Create(PromptUI, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {BackgroundTransparency = 0,Size = UDim2.new(0,350,0,150)}):Play()
-wait(0.2)
-TweenService:Create(PromptUI.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
-TweenService:Create(PromptUI.Title, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-TweenService:Create(PromptUI.Content, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-TweenService:Create(PromptUI.Sub, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-wait(1)
-if PromptSettings.Actions then
-for _, button in pairs(PromptUI.Buttons:GetChildren()) do
-if button.Name ~= 'Template' and button.Name ~= 'Middle' and button:IsA('Frame') then
-button.Visible = true
-TweenService:Create(button.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play()
-TweenService:Create(button.TextLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-wait(.8)
-end
-end
+task.wait(.2)
+TweenService:Create(PromptUI, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {BackgroundTransparency = 0, Size = UDim2.new(0, 350, 0, 150)}):Play()
+task.wait(0.2)
+if PromptUI.UIStroke then TweenService:Create(PromptUI.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {Transparency = 0}):Play() end
+if PromptUI.Title then TweenService:Create(PromptUI.Title, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play() end
+if PromptUI.Content then TweenService:Create(PromptUI.Content, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play() end
+if PromptUI.Sub then TweenService:Create(PromptUI.Sub, TweenInfo.new(0.45, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play() end
+task.wait(1)
+
+if PromptSettings.Actions and PromptUI.Buttons then
+    for _, button in pairs(PromptUI.Buttons:GetChildren()) do
+        if button.Name ~= 'Template' and button.Name ~= 'Middle' and button:IsA('Frame') then
+            button.Visible = true
+            if button.UIStroke then TweenService:Create(button.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {Transparency = 0}):Play() end
+            if button.TextLabel then TweenService:Create(button.TextLabel, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play() end
+            task.wait(.8)
+        end
+    end
 end
 return Window
+
 end
+
+
 
 
 
