@@ -1661,25 +1661,6 @@ function CosmosLibrary:CreateWindow(Settings)
 	if Settings.LoadingTitle ~= "Cosmo Interface Suite" then
 		LoadingFrame.Version.Text = "Cosmos UI"
 	end
-	
-				if Settings.KeySettings.Actions then
-				for _,ActionInfo in ipairs(Settings.KeySettings.Actions) do
-					local Action = KeyMain.Actions.Template:Clone()
-					Action.Text = ActionInfo.Text
-					Action.MouseButton1Down:Connect(ActionInfo.OnPress)
-					Action.MouseEnter:Connect(function()
-						TweenService:Create(Action,TweenInfo.new(.25,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{TextColor3 = Color3.fromRGB(185, 185, 185)}):Play()
-					end)
-					Action.MouseLeave:Connect(function()
-						TweenService:Create(Action,TweenInfo.new(.25,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{TextColor3 = Color3.fromRGB(105, 105, 105)}):Play()
-					end)
-					Action.Parent = KeyMain.Actions
-					delay(.2,function()
-						Action.Visible = true
-						TweenService:Create(Action, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {TextTransparency = 0}):Play()
-					end)
-				end
-			end
 
 	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
 		Topbar.Icon.Visible = true
