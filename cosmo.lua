@@ -1528,7 +1528,7 @@ function CosmosLibrary:CreateWindow(Settings)
 		if getgenv and not getgenv().cosmosCached then
 			CosmosH.Enabled = true
 			CosmosH.Loading.Visible = false
-			task.spawn(0.1)
+			task.spawn(1.4)
 			CosmosH.Loading.Visible = false
 		end
 	end
