@@ -1560,8 +1560,8 @@ function CosmosLibrary:CreateWindow(Settings)
 	LoadingFrame.Subtitle.TextTransparency = 1
 
 	LoadingFrame.Version.TextTransparency = 1
-	LoadingFrame.Title.Text = Settings.LoadingTitle or "Cosmos Hubs"
-	LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "Interface Suite"
+	LoadingFrame.Title.Text = "CosmosLibrary"
+	LoadingFrame.Subtitle.Text = "Interface Suite"
 
 	if Settings.LoadingTitle ~= "Cosmo Interface Suite" then
 		LoadingFrame.Version.Text = "Cosmos UI"
