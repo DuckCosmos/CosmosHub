@@ -1115,7 +1115,21 @@ function OpenSideBar()
 	wait(0.2)
 	Debounce = false
 end
-function Minimise() if not Main then return end Debounce = true
+
+function Minimise(notify)
+if not Main then
+return 
+end 
+Debounce = true
+
+if notify then
+    CosmosLibrary:Notify({
+        Title = "Interface Hidden",
+        Content = "The interface has been hidden, you can unhide the interface by tapping 'Show CosmosHub'.",
+        Duration = 7,
+        Image = 4400697855
+    })
+end
 
 TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 150, 0, 40)}):Play()
 TweenService:Create(Main.Topbar, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 150, 0, 40), BackgroundTransparency = 1}):Play()
@@ -1137,21 +1151,6 @@ for _, element in ipairs(Elements:GetChildren()) do
         element.Visible = false
     end
 end
-
-local ShowButton = Instance.new("TextButton")
-ShowButton.Parent = Main
-ShowButton.Size = UDim2.new(1, 0, 1, 0)
-ShowButton.Position = UDim2.new(0, 0, 0, 0)
-ShowButton.Text = "Show CosmosHub"
-ShowButton.BackgroundTransparency = 1
-ShowButton.TextTransparency = 0
-ShowButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ShowButton.Font = Enum.Font.SourceSansBold
-ShowButton.TextSize = 20
-ShowButton.MouseButton1Click:Connect(function()
-    Main.Visible = true
-    ShowButton:Destroy()
-end)
 
 task.wait(0.5)
 Main.Visible = false
@@ -3362,7 +3361,7 @@ Topbar.ChangeSize.MouseButton1Click:Connect(function()
 	else
 		if not SearchHided then SearchHided = true spawn(CloseSearch)  end
 		Minimised = true
-		Minimise()
+		Minimise(true)
 	end
 end)
 Topbar.Search.MouseButton1Click:Connect(function()
