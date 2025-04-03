@@ -1524,9 +1524,12 @@ end
 
 
 function CosmosLibrary:CreateWindow(Settings)
+LoadingFrame.Title.Text = "CosmosLibrary"
 	if CosmosH:FindFirstChild('Loading') then
 		if getgenv and not getgenv().cosmosCached then
 			CosmosH.Enabled = true
+			CosmosH.Loading.Visible = true
+			task.wait(1.4)
 			CosmosH.Loading.Visible = false
 		end
 	end
