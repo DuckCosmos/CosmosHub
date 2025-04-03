@@ -705,7 +705,7 @@ CosmosH.DisplayOrder = 100
 LoadingFrame.Version.Text = Release
 
 -- Thanks to Latte Softworks for the Lucide integration for Roblox
-local Icons = useStudio and require(script.Parent.icons) or loadWithTimeout('https://raw.githubusercontent.com/SiriusSoftwareLtd/CosmosH/refs/heads/main/icons.lua')
+local Icons = useStudio and require(script.Parent.icons) or loadWithTimeout('https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/refs/heads/main/icons.lua')
 -- Variables
 
 local CFileName = nil
@@ -1528,9 +1528,7 @@ function CosmosLibrary:CreateWindow(Settings)
 		if getgenv and not getgenv().cosmosCached then
 			CosmosH.Enabled = true
 			CosmosH.Loading.Visible = true
-
-			task.wait(1.4)
-			CosmosH.Loading.Visible = false
+			CosmosH.Loading.Visible = true
 		end
 	end
 
@@ -1607,7 +1605,7 @@ function CosmosLibrary:CreateWindow(Settings)
 
 	Topbar.Visible = false
 	Elements.Visible = false
-	LoadingFrame.Visible = true
+	LoadingFrame.Visible = false
 
 	if not Settings.DisableCosmosPrompts then
 		task.spawn(function()
