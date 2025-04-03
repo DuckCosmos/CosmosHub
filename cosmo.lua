@@ -618,7 +618,7 @@ local CoreGui = getService("CoreGui")
 
 -- Interface Management
 
-local CosmosH = useStudio and script.Parent:FindFirstChild('Cosmos') or game:GetObjects("rbxassetid://10804731440")[1]
+local CosmosH = useStudio and script.Parent:FindFirstChild('Cosmos') or game:GetObjects("rbxassetid://10804731440")[1] or  game:GetObjects("rbxassetid://13853811008")[1]
 local buildAttempts = 0
 local correctBuild = false
 local warned
@@ -638,7 +638,7 @@ repeat
 		warned = true
 	end
 
-	toDestroy, CosmosH = CosmosH, useStudio and script.Parent:FindFirstChild('Cosmos') or game:GetObjects("rbxassetid://10804731440")[1]
+	toDestroy, CosmosH = CosmosH, useStudio and script.Parent:FindFirstChild('Cosmos') or game:GetObjects("rbxassetid://10804731440")[1] or  game:GetObjects("rbxassetid://13853811008")[1]
 	if toDestroy and not useStudio then toDestroy:Destroy() end
 
 	buildAttempts = buildAttempts + 1
