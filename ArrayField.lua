@@ -1116,20 +1116,11 @@ function OpenSideBar()
 	Debounce = false
 end
 
-function Minimise(notify)
+function Minimise()
 if not Main then
 return 
 end 
 Debounce = true
-
-if notify then
-    CosmosLibrary:Notify({
-        Title = "Interface Hidden",
-        Content = "The interface has been hidden, you can unhide the interface by tapping 'Show CosmosHub'.",
-        Duration = 7,
-        Image = 4400697855
-    })
-end
 
 TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 150, 0, 40)}):Play()
 TweenService:Create(Main.Topbar, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 150, 0, 40), BackgroundTransparency = 1}):Play()
@@ -3361,7 +3352,7 @@ Topbar.ChangeSize.MouseButton1Click:Connect(function()
 	else
 		if not SearchHided then SearchHided = true spawn(CloseSearch)  end
 		Minimised = true
-		Minimise(true)
+		Minimise()
 	end
 end)
 Topbar.Search.MouseButton1Click:Connect(function()
