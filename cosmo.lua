@@ -715,8 +715,9 @@ local Hidden = false
 local Debounce = false
 local searchOpen = false
 local Notifications = Rayfield.Notifications
-
 local SelectedTheme = RayfieldLibrary.Theme.Default
+MPrompt.Title.Text = "Show CosmosHub"
+LoadingFrame.Title.Text = "CosmosLibrary"
 
 local function ChangeTheme(Theme)
 	if typeof(Theme) == 'string' then
