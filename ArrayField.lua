@@ -1143,12 +1143,14 @@ function OpenSideBar()
 end
 
 function Minimise()
+print(MPrompt)
+print(CosmosH)
 	if MPrompt then
 		MPrompt.Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 		MPrompt.Position = UDim2.new(0.5, 0, 0, -50)
 		MPrompt.Size = UDim2.new(0, 40, 0, 10)
-		MPrompt.BackgroundTransparency = 1
-		MPrompt.Title.TextTransparency = 1
+		MPrompt.BackgroundTransparency = 0.5
+		MPrompt.Title.TextTransparency = 0.5
 		MPrompt.Visible = true
 	end
 
@@ -1213,7 +1215,7 @@ function Minimise()
 	end
 
 	task.wait(0.5)
-	Main.Visible = true
+	Main.Visible = false
 	Debounce = false
 end
 
