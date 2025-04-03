@@ -1524,469 +1524,469 @@ end
 
 
 function CosmosLibrary:CreateWindow(Settings)
-LoadingFrame.Title.Text = "CosmosLibrary"
-	if CosmosH:FindFirstChild('Loading') then
-		if getgenv and not getgenv().cosmosCached then
-			CosmosH.Enabled = true
-			CosmosH.Loading.Visible = true
-			task.wait(1.4)
-			CosmosH.Loading.Visible = false
-		end
-	end
-
-	if getgenv then getgenv().cosmosCached = true end
-
-	if not correctBuild and not Settings.DisableBuildWarnings then
-		task.delay(3, 
-			function() 
-				CosmosLibrary:Notify({Title = 'Build Mismatch', Content = 'Cosmos may encounter issues as you are running an incompatible interface version ('.. ((CosmosH:FindFirstChild('Build') and CosmosH.Build.Value) or 'No Build') ..').\n\nThis version of CosmosH is intended for interface build '..InterfaceBuild..'.\n\nTry rejoining and then run the script twice.', Image = 4335487866, Duration = 15})		
-			end)
-	end
-
-	if isfolder and not isfolder(CosmosFolder) then
-		makefolder(CosmosFolder)
-	end
-
-	local Passthrough = false
-	Topbar.Title.Text = Settings.Name
-
-	Main.Size = UDim2.new(0, 420, 0, 100)
-	Main.Visible = true
-	Main.BackgroundTransparency = 1
-	if Main:FindFirstChild('Notice') then Main.Notice.Visible = false end
-	LoadingFrame.Title.TextTransparency = 1
-LoadingFrame.Subtitle.TextTransparency = 1
-LoadingFrame.Version.TextTransparency = 1
-
-print("titulo carregado:"..LoadingFrame.Title.Text)
-
-LoadingFrame.Title.Text = Settings.LoadingTitle or "Cosmos Hubs"
-LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "Interface Suite"
-
-if Settings.LoadingTitle ~= "Cosmo Interface Suite" then
-    LoadingFrame.Version.Text = "Cosmos UI"
-end
-
-	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
-		Topbar.Icon.Visible = true
-		Topbar.Title.Position = UDim2.new(0, 47, 0.5, 0)
-
-		if Settings.Icon then
-			if typeof(Settings.Icon) == 'string' and Icons then
-				local asset = getIcon(Settings.Icon)
-
-				Topbar.Icon.Image = 'rbxassetid://'..asset.id
-				Topbar.Icon.ImageRectOffset = asset.imageRectOffset
-				Topbar.Icon.ImageRectSize = asset.imageRectSize
-			else
-				Topbar.Icon.Image = getAssetUri(Settings.Icon)
-			end
-		else
-			Topbar.Icon.Image = "rbxassetid://" .. 0
-		end
-	end
-
-	if dragBar then
-		dragBar.Visible = false
-		dragBarCosmetic.BackgroundTransparency = 1
-		dragBar.Visible = true
-	end
-
-	if Settings.Theme then
-		local success, result = pcall(ChangeTheme, Settings.Theme)
-		if not success then
-			local success, result2 = pcall(ChangeTheme, 'Default')
-			if not success then
-				warn('CRITICAL ERROR - NO DEFAULT THEME')
-				print(result2)
-			end
-			warn('issue rendering theme. no theme on file')
-			print(result)
-		end
-	end
-
-	Topbar.Visible = false
-	Elements.Visible = false
-	LoadingFrame.Visible = true
-
-	if not Settings.DisableCosmosPrompts then
-		task.spawn(function()
-			while true do
-				task.wait(math.random(180, 600))
-				CosmosLibrary:Notify({
-					Title = "Cosmos Interface",
-					Content = "Enjoying this UI library? Find it at sirius.menu/discord",
-					Duration = 7,
-					Image = 4370033185,
-				})
-			end
-		end)
-	end
-
-	pcall(function()
-		if not Settings.ConfigurationSaving.FileName then
-			Settings.ConfigurationSaving.FileName = tostring(game.PlaceId)
-		end
-
-		if Settings.ConfigurationSaving.Enabled == nil then
-			Settings.ConfigurationSaving.Enabled = false
-		end
-
-		CFileName = Settings.ConfigurationSaving.FileName
-		ConfigurationFolder = Settings.ConfigurationSaving.FolderName or ConfigurationFolder
-		CEnabled = Settings.ConfigurationSaving.Enabled
-
-		if Settings.ConfigurationSaving.Enabled then
-			if not isfolder(ConfigurationFolder) then
-				makefolder(ConfigurationFolder)
-			end	
-		end
-	end)
-
-
-	makeDraggable(Main, Topbar, false, {dragOffset, dragOffsetMobile})
-	if dragBar then dragBar.Position = useMobileSizing and UDim2.new(0.5, 0, 0.5, dragOffsetMobile) or UDim2.new(0.5, 0, 0.5, dragOffset) makeDraggable(Main, dragInteract, true, {dragOffset, dragOffsetMobile}) end
-
-	for _, TabButton in ipairs(TabList:GetChildren()) do
-		if TabButton.ClassName == "Frame" and TabButton.Name ~= "Placeholder" then
-			TabButton.BackgroundTransparency = 1
-			TabButton.Title.TextTransparency = 1
-			TabButton.Image.ImageTransparency = 1
-			TabButton.UIStroke.Transparency = 1
-		end
-	end
-
-	if Settings.Discord and not useStudio then
-		if isfolder and not isfolder(CosmosFolder.."/Discord Invites") then
-			makefolder(CosmosFolder.."/Discord Invites")
-		end
-
-		if isfile and not isfile(CosmosFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then
-			if request then
-				pcall(function()
-					request({
-						Url = 'http://127.0.0.1:6463/rpc?v=1',
-						Method = 'POST',
-						Headers = {
-							['Content-Type'] = 'application/json',
-							Origin = 'https://discord.com'
-						},
-						Body = HttpService:JSONEncode({
-							cmd = 'INVITE_BROWSER',
-							nonce = HttpService:GenerateGUID(false),
-							args = {code = Settings.Discord.Invite}
-						})
-					})
-				end)
-			end
-
-			if Settings.Discord.RememberJoins then -- We do logic this way so if the developer changes this setting, the user still won't be prompted, only new users
-				writefile(CosmosFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Cosmos RememberJoins is true for this invite, this invite will not ask you to join again")
-			end
-		end
-	end
-
-	if (Settings.KeySystem) then
-		if not Settings.KeySettings then
-			Passthrough = true
-			return
-		end
-
-		if isfolder and not isfolder(CosmosFolder.."/Key System") then
-			makefolder(CosmosFolder.."/Key System")
-		end
-
-		if typeof(Settings.KeySettings.Key) == "string" then Settings.KeySettings.Key = {Settings.KeySettings.Key} end
-
-		if Settings.KeySettings.GrabKeyFromSite then
-			for i, Key in ipairs(Settings.KeySettings.Key) do
-				local Success, Response = pcall(function()
-					Settings.KeySettings.Key[i] = tostring(game:HttpGet(Key):gsub("[\n\r]", " "))
-					Settings.KeySettings.Key[i] = string.gsub(Settings.KeySettings.Key[i], " ", "")
-				end)
-				if not Success then
-					print("Cosmos | "..Key.." Error " ..tostring(Response))
-					warn('Check docs.sirius.menu for help with CosmosH specific development.')
-				end
-			end
-		end
-
-		if not Settings.KeySettings.FileName then
-			Settings.KeySettings.FileName = "No file name specified"
-		end
-
-		if isfile and isfile(CosmosFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension) then
-			for _, MKey in ipairs(Settings.KeySettings.Key) do
-				if string.find(readfile(CosmosFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension), MKey) then
-					Passthrough = true
-				end
-			end
-		end
-
-		if not Passthrough then
-			local AttemptsRemaining = math.random(2, 5)
-			CosmosH.Enabled = false
-			local KeyUI = useStudio and script.Parent:FindFirstChild('Key') or game:GetObjects("rbxassetid://11380036235")[1]
-
-			KeyUI.Enabled = true
-
-			if gethui then
-				KeyUI.Parent = gethui()
-			elseif syn and syn.protect_gui then 
-				syn.protect_gui(KeyUI)
-				KeyUI.Parent = CoreGui
-			elseif not useStudio and CoreGui:FindFirstChild("RobloxGui") then
-				KeyUI.Parent = CoreGui:FindFirstChild("RobloxGui")
-			elseif not useStudio then
-				KeyUI.Parent = CoreGui
-			end
-
-			if gethui then
-				for _, Interface in ipairs(gethui():GetChildren()) do
-					if Interface.Name == KeyUI.Name and Interface ~= KeyUI then
-						Interface.Enabled = false
-						Interface.Name = "KeyUI-Old"
-					end
-				end
-			elseif not useStudio then
-				for _, Interface in ipairs(CoreGui:GetChildren()) do
-					if Interface.Name == KeyUI.Name and Interface ~= KeyUI then
-						Interface.Enabled = false
-						Interface.Name = "KeyUI-Old"
-					end
-				end
-			end
-
-			local KeyMain = KeyUI.Main
-			KeyMain.Title.Text = Settings.KeySettings.Title or Settings.Name
-			KeyMain.Subtitle.Text = Settings.KeySettings.Subtitle or "Key System"
-			KeyMain.NoteMessage.Text = Settings.KeySettings.Note or "No instructions"
-
-			KeyMain.Size = UDim2.new(0, 467, 0, 175)
-			KeyMain.BackgroundTransparency = 1
-			KeyMain.Shadow.Image.ImageTransparency = 1
-			KeyMain.Title.TextTransparency = 1
-			KeyMain.Subtitle.TextTransparency = 1
-			KeyMain.KeyNote.TextTransparency = 1
-			KeyMain.Input.BackgroundTransparency = 1
-			KeyMain.Input.UIStroke.Transparency = 1
-			KeyMain.Input.InputBox.TextTransparency = 1
-			KeyMain.NoteTitle.TextTransparency = 1
-			KeyMain.NoteMessage.TextTransparency = 1
-			KeyMain.Hide.ImageTransparency = 1
-
-			TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
-			TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 500, 0, 187)}):Play()
-			TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 0.5}):Play()
-			task.wait(0.05)
-			TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-			TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-			task.wait(0.05)
-			TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-			TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
-			TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
-			TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-			task.wait(0.05)
-			TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-			TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-			task.wait(0.15)
-			TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 0.3}):Play()
-
-
-			KeyUI.Main.Input.InputBox.FocusLost:Connect(function()
-				if #KeyUI.Main.Input.InputBox.Text == 0 then return end
-				local KeyFound = false
-				local FoundKey = ''
-				for _, MKey in ipairs(Settings.KeySettings.Key) do
-					--if string.find(KeyMain.Input.InputBox.Text, MKey) then
-					--	KeyFound = true
-					--	FoundKey = MKey
-					--end
-
-
-					-- stricter key check
-					if KeyMain.Input.InputBox.Text == MKey then
-						KeyFound = true
-						FoundKey = MKey
-					end
-				end
-				if KeyFound then 
-					TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
-					TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()
-					TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
-					TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-					TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-					TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-					TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
-					TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-					TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-					TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-					TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-					TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
-					task.wait(0.51)
-					Passthrough = true
-					KeyMain.Visible = false
-					if Settings.KeySettings.SaveKey then
-						if writefile then
-							writefile(CosmosFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension, FoundKey)
-						end
-						CosmosLibrary:Notify({Title = "Key System", Content = "The key for this script has been saved successfully.", Image = 3605522284})
-					end
-				else
-					if AttemptsRemaining == 0 then
-						TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
-						TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()
-						TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
-						TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-						TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-						TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-						TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
-						TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-						TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-						TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-						TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-						TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
-						task.wait(0.45)
-						Players.LocalPlayer:Kick("No Attempts Remaining")
-						game:Shutdown()
-					end
-					KeyMain.Input.InputBox.Text = ""
-					AttemptsRemaining = AttemptsRemaining - 1
-					TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()
-					TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Elastic), {Position = UDim2.new(0.495,0,0.5,0)}):Play()
-					task.wait(0.1)
-					TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Elastic), {Position = UDim2.new(0.505,0,0.5,0)}):Play()
-					task.wait(0.1)
-					TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Position = UDim2.new(0.5,0,0.5,0)}):Play()
-					TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 500, 0, 187)}):Play()
-				end
-			end)
-
-			KeyMain.Hide.MouseButton1Click:Connect(function()
-				TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
-				TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()
-				TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
-				TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-				TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-				TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-				TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
-				TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
-				TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-				TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-				TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
-				TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
-				task.wait(0.51)
-				CosmosLibrary:Destroy()
-				KeyUI:Destroy()
-			end)
-		else
-			Passthrough = true
-		end
-	end
-	if Settings.KeySystem then
-		repeat task.wait() until Passthrough
-	end
-
-	Notifications.Template.Visible = false
-	Notifications.Visible = true
-	CosmosH.Enabled = true
-
-	task.wait(0.5)
-	TweenService:Create(Main, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
-	TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {ImageTransparency = 0.6}):Play()
-	task.wait(0.1)
-	TweenService:Create(LoadingFrame.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-	task.wait(0.05)
-	TweenService:Create(LoadingFrame.Subtitle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-	task.wait(0.05)
-	TweenService:Create(LoadingFrame.Version, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
-
-
-	Elements.Template.LayoutOrder = 100000
-	Elements.Template.Visible = false
-
-	Elements.UIPageLayout.FillDirection = Enum.FillDirection.Horizontal
-	TabList.Template.Visible = false
-
-	-- Tab
-	local FirstTab = false
-	local Window = {}
-	function Window:CreateTab(Name, Image, Ext)
-		local SDone = false
-		local TabButton = TabList.Template:Clone()
-		TabButton.Name = Name
-		TabButton.Title.Text = Name
-		TabButton.Parent = TabList
-		TabButton.Title.TextWrapped = false
-		TabButton.Size = UDim2.new(0, TabButton.Title.TextBounds.X + 30, 0, 30)
-
-		if Image and Image ~= 0 then
-			if typeof(Image) == 'string' and Icons then
-				local asset = getIcon(Image)
-
-				TabButton.Image.Image = 'rbxassetid://'..asset.id
-				TabButton.Image.ImageRectOffset = asset.imageRectOffset
-				TabButton.Image.ImageRectSize = asset.imageRectSize
-			else
-				TabButton.Image.Image = getAssetUri(Image)
-			end
-
-			TabButton.Title.AnchorPoint = Vector2.new(0, 0.5)
-			TabButton.Title.Position = UDim2.new(0, 37, 0.5, 0)
-			TabButton.Image.Visible = true
-			TabButton.Title.TextXAlignment = Enum.TextXAlignment.Left
-			TabButton.Size = UDim2.new(0, TabButton.Title.TextBounds.X + 52, 0, 30)
-		end
-
-
-
-		TabButton.BackgroundTransparency = 1
-		TabButton.Title.TextTransparency = 1
-		TabButton.Image.ImageTransparency = 1
-		TabButton.UIStroke.Transparency = 1
-
-		TabButton.Visible = not Ext or false
-
-		-- Create Elements Page
-		local TabPage = Elements.Template:Clone()
-		TabPage.Name = Name
-		TabPage.Visible = true
-
-		TabPage.LayoutOrder = #Elements:GetChildren() or Ext and 10000
-
-		for _, TemplateElement in ipairs(TabPage:GetChildren()) do
-			if TemplateElement.ClassName == "Frame" and TemplateElement.Name ~= "Placeholder" then
-				TemplateElement:Destroy()
-			end
-		end
-
-		TabPage.Parent = Elements
-		if not FirstTab and not Ext then
-			Elements.UIPageLayout.Animated = false
-			Elements.UIPageLayout:JumpTo(TabPage)
-			Elements.UIPageLayout.Animated = true
-		end
-
-		TabButton.UIStroke.Color = SelectedTheme.TabStroke
-
-		if Elements.UIPageLayout.CurrentPage == TabPage then
-			TabButton.BackgroundColor3 = SelectedTheme.TabBackgroundSelected
-			TabButton.Image.ImageColor3 = SelectedTheme.SelectedTabTextColor
-			TabButton.Title.TextColor3 = SelectedTheme.SelectedTabTextColor
-		else
-			TabButton.BackgroundColor3 = SelectedTheme.TabBackground
-			TabButton.Image.ImageColor3 = SelectedTheme.TabTextColor
-			TabButton.Title.TextColor3 = SelectedTheme.TabTextColor
-		end
-
-
-		-- Animate
-		task.wait(0.1)
-		if FirstTab or Ext then
-			TabButton.BackgroundColor3 = SelectedTheme.TabBackground
-			TabButton.Image.ImageColor3 = SelectedTheme.TabTextColor
-			TabButton.Title.TextColor3 = SelectedTheme.TabTextColor
-			TweenService:Create(TabButton, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.7}):Play()
+if CosmosH:FindFirstChild('Loading') then
+if getgenv and not getgenv().cosmosCached then
+CosmosH.Enabled = true
+CosmosH.Loading.Visible = true
+
+task.wait(1.4)  
+		CosmosH.Loading.Visible = false  
+	end  
+end  
+
+if getgenv then getgenv().cosmosCached = true end  
+
+if not correctBuild and not Settings.DisableBuildWarnings then  
+	task.delay(3,   
+		function()   
+			CosmosLibrary:Notify({Title = 'Build Mismatch', Content = 'Cosmos may encounter issues as you are running an incompatible interface version ('.. ((CosmosH:FindFirstChild('Build') and CosmosH.Build.Value) or 'No Build') ..').\n\nThis version of CosmosH is intended for interface build '..InterfaceBuild..'.\n\nTry rejoining and then run the script twice.', Image = 4335487866, Duration = 15})		  
+		end)  
+end  
+
+if isfolder and not isfolder(CosmosFolder) then  
+	makefolder(CosmosFolder)  
+end  
+
+local Passthrough = false  
+Topbar.Title.Text = Settings.Name  
+
+Main.Size = UDim2.new(0, 420, 0, 100)  
+Main.Visible = true  
+Main.BackgroundTransparency = 1  
+if Main:FindFirstChild('Notice') then Main.Notice.Visible = false end  
+Main.Shadow.Image.ImageTransparency = 1  
+
+LoadingFrame.Title.TextTransparency = 1  
+LoadingFrame.Subtitle.TextTransparency = 1  
+
+LoadingFrame.Version.TextTransparency = 1  
+LoadingFrame.Title.Text = Settings.LoadingTitle or "Cosmos Hubs"  
+LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "Interface Suite"  
+
+if Settings.LoadingTitle ~= "Cosmo Interface Suite" then  
+	LoadingFrame.Version.Text = "Cosmos UI"  
+end  
+
+if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then  
+	Topbar.Icon.Visible = true  
+	Topbar.Title.Position = UDim2.new(0, 47, 0.5, 0)  
+
+	if Settings.Icon then  
+		if typeof(Settings.Icon) == 'string' and Icons then  
+			local asset = getIcon(Settings.Icon)  
+
+			Topbar.Icon.Image = 'rbxassetid://'..asset.id  
+			Topbar.Icon.ImageRectOffset = asset.imageRectOffset  
+			Topbar.Icon.ImageRectSize = asset.imageRectSize  
+		else  
+			Topbar.Icon.Image = getAssetUri(Settings.Icon)  
+		end  
+	else  
+		Topbar.Icon.Image = "rbxassetid://" .. 0  
+	end  
+end  
+
+if dragBar then  
+	dragBar.Visible = false  
+	dragBarCosmetic.BackgroundTransparency = 1  
+	dragBar.Visible = true  
+end  
+
+if Settings.Theme then  
+	local success, result = pcall(ChangeTheme, Settings.Theme)  
+	if not success then  
+		local success, result2 = pcall(ChangeTheme, 'Default')  
+		if not success then  
+			warn('CRITICAL ERROR - NO DEFAULT THEME')  
+			print(result2)  
+		end  
+		warn('issue rendering theme. no theme on file')  
+		print(result)  
+	end  
+end  
+
+Topbar.Visible = false  
+Elements.Visible = false  
+LoadingFrame.Visible = true  
+
+if not Settings.DisableCosmosPrompts then  
+	task.spawn(function()  
+		while true do  
+			task.wait(math.random(180, 600))  
+			CosmosLibrary:Notify({  
+				Title = "Cosmos Interface",  
+				Content = "Enjoying this UI library? Find it at sirius.menu/discord",  
+				Duration = 7,  
+				Image = 4370033185,  
+			})  
+		end  
+	end)  
+end  
+
+pcall(function()  
+	if not Settings.ConfigurationSaving.FileName then  
+		Settings.ConfigurationSaving.FileName = tostring(game.PlaceId)  
+	end  
+
+	if Settings.ConfigurationSaving.Enabled == nil then  
+		Settings.ConfigurationSaving.Enabled = false  
+	end  
+
+	CFileName = Settings.ConfigurationSaving.FileName  
+	ConfigurationFolder = Settings.ConfigurationSaving.FolderName or ConfigurationFolder  
+	CEnabled = Settings.ConfigurationSaving.Enabled  
+
+	if Settings.ConfigurationSaving.Enabled then  
+		if not isfolder(ConfigurationFolder) then  
+			makefolder(ConfigurationFolder)  
+		end	  
+	end  
+end)  
+
+
+makeDraggable(Main, Topbar, false, {dragOffset, dragOffsetMobile})  
+if dragBar then dragBar.Position = useMobileSizing and UDim2.new(0.5, 0, 0.5, dragOffsetMobile) or UDim2.new(0.5, 0, 0.5, dragOffset) makeDraggable(Main, dragInteract, true, {dragOffset, dragOffsetMobile}) end  
+
+for _, TabButton in ipairs(TabList:GetChildren()) do  
+	if TabButton.ClassName == "Frame" and TabButton.Name ~= "Placeholder" then  
+		TabButton.BackgroundTransparency = 1  
+		TabButton.Title.TextTransparency = 1  
+		TabButton.Image.ImageTransparency = 1  
+		TabButton.UIStroke.Transparency = 1  
+	end  
+end  
+
+if Settings.Discord and not useStudio then  
+	if isfolder and not isfolder(CosmosFolder.."/Discord Invites") then  
+		makefolder(CosmosFolder.."/Discord Invites")  
+	end  
+
+	if isfile and not isfile(CosmosFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then  
+		if request then  
+			pcall(function()  
+				request({  
+					Url = 'http://127.0.0.1:6463/rpc?v=1',  
+					Method = 'POST',  
+					Headers = {  
+						['Content-Type'] = 'application/json',  
+						Origin = 'https://discord.com'  
+					},  
+					Body = HttpService:JSONEncode({  
+						cmd = 'INVITE_BROWSER',  
+						nonce = HttpService:GenerateGUID(false),  
+						args = {code = Settings.Discord.Invite}  
+					})  
+				})  
+			end)  
+		end  
+
+		if Settings.Discord.RememberJoins then -- We do logic this way so if the developer changes this setting, the user still won't be prompted, only new users  
+			writefile(CosmosFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Cosmos RememberJoins is true for this invite, this invite will not ask you to join again")  
+		end  
+	end  
+end  
+
+if (Settings.KeySystem) then  
+	if not Settings.KeySettings then  
+		Passthrough = true  
+		return  
+	end  
+
+	if isfolder and not isfolder(CosmosFolder.."/Key System") then  
+		makefolder(CosmosFolder.."/Key System")  
+	end  
+
+	if typeof(Settings.KeySettings.Key) == "string" then Settings.KeySettings.Key = {Settings.KeySettings.Key} end  
+
+	if Settings.KeySettings.GrabKeyFromSite then  
+		for i, Key in ipairs(Settings.KeySettings.Key) do  
+			local Success, Response = pcall(function()  
+				Settings.KeySettings.Key[i] = tostring(game:HttpGet(Key):gsub("[\n\r]", " "))  
+				Settings.KeySettings.Key[i] = string.gsub(Settings.KeySettings.Key[i], " ", "")  
+			end)  
+			if not Success then  
+				print("Cosmos | "..Key.." Error " ..tostring(Response))  
+				warn('Check docs.sirius.menu for help with CosmosH specific development.')  
+			end  
+		end  
+	end  
+
+	if not Settings.KeySettings.FileName then  
+		Settings.KeySettings.FileName = "No file name specified"  
+	end  
+
+	if isfile and isfile(CosmosFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension) then  
+		for _, MKey in ipairs(Settings.KeySettings.Key) do  
+			if string.find(readfile(CosmosFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension), MKey) then  
+				Passthrough = true  
+			end  
+		end  
+	end  
+
+	if not Passthrough then  
+		local AttemptsRemaining = math.random(2, 5)  
+		CosmosH.Enabled = false  
+		local KeyUI = useStudio and script.Parent:FindFirstChild('Key') or game:GetObjects("rbxassetid://11380036235")[1]  
+
+		KeyUI.Enabled = true  
+
+		if gethui then  
+			KeyUI.Parent = gethui()  
+		elseif syn and syn.protect_gui then   
+			syn.protect_gui(KeyUI)  
+			KeyUI.Parent = CoreGui  
+		elseif not useStudio and CoreGui:FindFirstChild("RobloxGui") then  
+			KeyUI.Parent = CoreGui:FindFirstChild("RobloxGui")  
+		elseif not useStudio then  
+			KeyUI.Parent = CoreGui  
+		end  
+
+		if gethui then  
+			for _, Interface in ipairs(gethui():GetChildren()) do  
+				if Interface.Name == KeyUI.Name and Interface ~= KeyUI then  
+					Interface.Enabled = false  
+					Interface.Name = "KeyUI-Old"  
+				end  
+			end  
+		elseif not useStudio then  
+			for _, Interface in ipairs(CoreGui:GetChildren()) do  
+				if Interface.Name == KeyUI.Name and Interface ~= KeyUI then  
+					Interface.Enabled = false  
+					Interface.Name = "KeyUI-Old"  
+				end  
+			end  
+		end  
+
+		local KeyMain = KeyUI.Main  
+		KeyMain.Title.Text = Settings.KeySettings.Title or Settings.Name  
+		KeyMain.Subtitle.Text = Settings.KeySettings.Subtitle or "Key System"  
+		KeyMain.NoteMessage.Text = Settings.KeySettings.Note or "No instructions"  
+
+		KeyMain.Size = UDim2.new(0, 467, 0, 175)  
+		KeyMain.BackgroundTransparency = 1  
+		KeyMain.Shadow.Image.ImageTransparency = 1  
+		KeyMain.Title.TextTransparency = 1  
+		KeyMain.Subtitle.TextTransparency = 1  
+		KeyMain.KeyNote.TextTransparency = 1  
+		KeyMain.Input.BackgroundTransparency = 1  
+		KeyMain.Input.UIStroke.Transparency = 1  
+		KeyMain.Input.InputBox.TextTransparency = 1  
+		KeyMain.NoteTitle.TextTransparency = 1  
+		KeyMain.NoteMessage.TextTransparency = 1  
+		KeyMain.Hide.ImageTransparency = 1  
+
+		TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()  
+		TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 500, 0, 187)}):Play()  
+		TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 0.5}):Play()  
+		task.wait(0.05)  
+		TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()  
+		TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()  
+		task.wait(0.05)  
+		TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()  
+		TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()  
+		TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()  
+		TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()  
+		task.wait(0.05)  
+		TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()  
+		TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()  
+		task.wait(0.15)  
+		TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 0.3}):Play()  
+
+
+		KeyUI.Main.Input.InputBox.FocusLost:Connect(function()  
+			if #KeyUI.Main.Input.InputBox.Text == 0 then return end  
+			local KeyFound = false  
+			local FoundKey = ''  
+			for _, MKey in ipairs(Settings.KeySettings.Key) do  
+				--if string.find(KeyMain.Input.InputBox.Text, MKey) then  
+				--	KeyFound = true  
+				--	FoundKey = MKey  
+				--end  
+
+
+				-- stricter key check  
+				if KeyMain.Input.InputBox.Text == MKey then  
+					KeyFound = true  
+					FoundKey = MKey  
+				end  
+			end  
+			if KeyFound then   
+				TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()  
+				TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()  
+				TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()  
+				TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+				TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+				TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+				TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()  
+				TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()  
+				TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+				TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+				TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+				TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()  
+				task.wait(0.51)  
+				Passthrough = true  
+				KeyMain.Visible = false  
+				if Settings.KeySettings.SaveKey then  
+					if writefile then  
+						writefile(CosmosFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension, FoundKey)  
+					end  
+					CosmosLibrary:Notify({Title = "Key System", Content = "The key for this script has been saved successfully.", Image = 3605522284})  
+				end  
+			else  
+				if AttemptsRemaining == 0 then  
+					TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()  
+					TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()  
+					TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()  
+					TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+					TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+					TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+					TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()  
+					TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()  
+					TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+					TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+					TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+					TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()  
+					task.wait(0.45)  
+					Players.LocalPlayer:Kick("No Attempts Remaining")  
+					game:Shutdown()  
+				end  
+				KeyMain.Input.InputBox.Text = ""  
+				AttemptsRemaining = AttemptsRemaining - 1  
+				TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()  
+				TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Elastic), {Position = UDim2.new(0.495,0,0.5,0)}):Play()  
+				task.wait(0.1)  
+				TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Elastic), {Position = UDim2.new(0.505,0,0.5,0)}):Play()  
+				task.wait(0.1)  
+				TweenService:Create(KeyMain, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Position = UDim2.new(0.5,0,0.5,0)}):Play()  
+				TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 500, 0, 187)}):Play()  
+			end  
+		end)  
+
+		KeyMain.Hide.MouseButton1Click:Connect(function()  
+			TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()  
+			TweenService:Create(KeyMain, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 467, 0, 175)}):Play()  
+			TweenService:Create(KeyMain.Shadow.Image, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()  
+			TweenService:Create(KeyMain.Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+			TweenService:Create(KeyMain.Subtitle, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+			TweenService:Create(KeyMain.KeyNote, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+			TweenService:Create(KeyMain.Input, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()  
+			TweenService:Create(KeyMain.Input.UIStroke, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()  
+			TweenService:Create(KeyMain.Input.InputBox, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+			TweenService:Create(KeyMain.NoteTitle, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+			TweenService:Create(KeyMain.NoteMessage, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()  
+			TweenService:Create(KeyMain.Hide, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()  
+			task.wait(0.51)  
+			CosmosLibrary:Destroy()  
+			KeyUI:Destroy()  
+		end)  
+	else  
+		Passthrough = true  
+	end  
+end  
+if Settings.KeySystem then  
+	repeat task.wait() until Passthrough  
+end  
+
+Notifications.Template.Visible = false  
+Notifications.Visible = true  
+CosmosH.Enabled = true  
+
+task.wait(0.5)  
+TweenService:Create(Main, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()  
+TweenService:Create(Main.Shadow.Image, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {ImageTransparency = 0.6}):Play()  
+task.wait(0.1)  
+TweenService:Create(LoadingFrame.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()  
+task.wait(0.05)  
+TweenService:Create(LoadingFrame.Subtitle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()  
+task.wait(0.05)  
+TweenService:Create(LoadingFrame.Version, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()  
+
+
+Elements.Template.LayoutOrder = 100000  
+Elements.Template.Visible = false  
+
+Elements.UIPageLayout.FillDirection = Enum.FillDirection.Horizontal  
+TabList.Template.Visible = false  
+
+-- Tab  
+local FirstTab = false  
+local Window = {}  
+function Window:CreateTab(Name, Image, Ext)  
+	local SDone = false  
+	local TabButton = TabList.Template:Clone()  
+	TabButton.Name = Name  
+	TabButton.Title.Text = Name  
+	TabButton.Parent = TabList  
+	TabButton.Title.TextWrapped = false  
+	TabButton.Size = UDim2.new(0, TabButton.Title.TextBounds.X + 30, 0, 30)  
+
+	if Image and Image ~= 0 then  
+		if typeof(Image) == 'string' and Icons then  
+			local asset = getIcon(Image)  
+
+			TabButton.Image.Image = 'rbxassetid://'..asset.id  
+			TabButton.Image.ImageRectOffset = asset.imageRectOffset  
+			TabButton.Image.ImageRectSize = asset.imageRectSize  
+		else  
+			TabButton.Image.Image = getAssetUri(Image)  
+		end  
+
+		TabButton.Title.AnchorPoint = Vector2.new(0, 0.5)  
+		TabButton.Title.Position = UDim2.new(0, 37, 0.5, 0)  
+		TabButton.Image.Visible = true  
+		TabButton.Title.TextXAlignment = Enum.TextXAlignment.Left  
+		TabButton.Size = UDim2.new(0, TabButton.Title.TextBounds.X + 52, 0, 30)  
+	end  
+
+
+
+	TabButton.BackgroundTransparency = 1  
+	TabButton.Title.TextTransparency = 1  
+	TabButton.Image.ImageTransparency = 1  
+	TabButton.UIStroke.Transparency = 1  
+
+	TabButton.Visible = not Ext or false  
+
+	-- Create Elements Page  
+	local TabPage = Elements.Template:Clone()  
+	TabPage.Name = Name  
+	TabPage.Visible = true  
+
+	TabPage.LayoutOrder = #Elements:GetChildren() or Ext and 10000  
+
+	for _, TemplateElement in ipairs(TabPage:GetChildren()) do  
+		if TemplateElement.ClassName == "Frame" and TemplateElement.Name ~= "Placeholder" then  
+			TemplateElement:Destroy()  
+		end  
+	end  
+
+	TabPage.Parent = Elements  
+	if not FirstTab and not Ext then  
+		Elements.UIPageLayout.Animated = false  
+		Elements.UIPageLayout:JumpTo(TabPage)  
+		Elements.UIPageLayout.Animated = true  
+	end  
+
+	TabButton.UIStroke.Color = SelectedTheme.TabStroke  
+
+	if Elements.UIPageLayout.CurrentPage == TabPage then  
+		TabButton.BackgroundColor3 = SelectedTheme.TabBackgroundSelected  
+		TabButton.Image.ImageColor3 = SelectedTheme.SelectedTabTextColor  
+		TabButton.Title.TextColor3 = SelectedTheme.SelectedTabTextColor  
+	else  
+		TabButton.BackgroundColor3 = SelectedTheme.TabBackground  
+		TabButton.Image.ImageColor3 = SelectedTheme.TabTextColor  
+		TabButton.Title.TextColor3 = SelectedTheme.TabTextColor  
+	end  
+
+
+	-- Animate  
+	task.wait(0.1)  
+	if FirstTab or Ext then  
+		TabButton.BackgroundColor3 = SelectedTheme.TabBackground  
+		TabButton.Image.ImageColor3 = SelectedTheme.TabTextColor  
+		TabButton.Title.TextColor3 = SelectedTheme.TabTextColor  
+		TweenService:Create(TabButton, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.7}):Play()
 			TweenService:Create(TabButton.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0.2}):Play()
 			TweenService:Create(TabButton.Image, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {ImageTransparency = 0.2}):Play()
 			TweenService:Create(TabButton.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
