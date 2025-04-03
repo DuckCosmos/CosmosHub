@@ -1138,7 +1138,7 @@ function Minimise()
 		MPrompt.Visible = true
 	end
 
-	task.spawn(closeSearch)
+	task.spawn(CloseSearch)
 
 	Debounce = true
 
