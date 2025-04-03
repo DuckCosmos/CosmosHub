@@ -3337,10 +3337,6 @@ return Window
 
 end
 
-Coloca pra mim
-
-
-
 function ArrayFieldLibrary:Destroy()
 	ArrayField:Destroy()
 end
