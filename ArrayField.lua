@@ -1213,7 +1213,7 @@ function Minimise()
 	end
 
 	task.wait(0.5)
-	Main.Visible = false
+	Main.Visible = true
 	Debounce = false
 end
 
