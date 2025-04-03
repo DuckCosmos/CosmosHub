@@ -1553,18 +1553,18 @@ function CosmosLibrary:CreateWindow(Settings)
 	Main.Visible = true
 	Main.BackgroundTransparency = 1
 	if Main:FindFirstChild('Notice') then Main.Notice.Visible = false end
-	Main.Shadow.Image.ImageTransparency = 1
-
 	LoadingFrame.Title.TextTransparency = 1
-	LoadingFrame.Subtitle.TextTransparency = 1
+LoadingFrame.Subtitle.TextTransparency = 1
+LoadingFrame.Version.TextTransparency = 1
 
-	LoadingFrame.Version.TextTransparency = 1
-	LoadingFrame.Title.Text = "CosmosLibrary"
-	LoadingFrame.Subtitle.Text = "Interface Suite"
+print("titulo carregado:"..LoadingFrame.Title.Text)
 
-	if Settings.LoadingTitle ~= "Cosmo Interface Suite" then
-		LoadingFrame.Version.Text = "Cosmos UI"
-	end
+LoadingFrame.Title.Text = Settings.LoadingTitle or "Cosmos Hubs"
+LoadingFrame.Subtitle.Text = Settings.LoadingSubtitle or "Interface Suite"
+
+if Settings.LoadingTitle ~= "Cosmo Interface Suite" then
+    LoadingFrame.Version.Text = "Cosmos UI"
+end
 
 	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
 		Topbar.Icon.Visible = true
