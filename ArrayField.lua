@@ -1138,8 +1138,6 @@ function Minimise()
 		MPrompt.Visible = true
 	end
 
-	task.spawn(CloseSearch)
-
 	Debounce = true
 
 	TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Exponential), {Size = UDim2.new(0, 470, 0, 0)}):Play()
@@ -1432,7 +1430,7 @@ function ArrayFieldLibrary:CreateWindow(Settings)
 					Passthrough = true
 					if Settings.KeySettings.SaveKey then
 						if writefile then
-							writefile(ArrayFieldFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension, Settings.KeySettings.Key)
+							writefile(ArrayFieldFolder.."/Key System".."/"..Settings.KeySettings.FileName..ConfigurationExtension, tostring(Settings.KeySettings.Key))
 						end
 						ArrayFieldLibrary:Notify({Title = "Key System", Content = "The key for this script has been saved successfully"})
 					end
