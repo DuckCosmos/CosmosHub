@@ -1527,8 +1527,8 @@ function CosmosLibrary:CreateWindow(Settings)
 	if CosmosH:FindFirstChild('Loading') then
 		if getgenv and not getgenv().cosmosCached then
 			CosmosH.Enabled = true
-			CosmosH.Loading.Visible = true
-			CosmosH.Loading.Visible = true
+			CosmosH.Loading.Visible = false
+			CosmosH.Loading.Visible = false
 		end
 	end
 
@@ -1605,7 +1605,7 @@ function CosmosLibrary:CreateWindow(Settings)
 
 	Topbar.Visible = false
 	Elements.Visible = false
-	LoadingFrame.Visible = false
+	LoadingFrame.Visible = true
 
 	if not Settings.DisableCosmosPrompts then
 		task.spawn(function()
